@@ -1,0 +1,42 @@
+use world;
+
+CREATE TABLE myCountry AS (SELECT * FROM country);
+
+select * from myCountry;
+
+ALTER TABLE myCountry
+PARTITION BY RANGE (Population) (
+PARTITION p0 VALUES LESS THAN (5000),
+PARTITION p1 VALUES LESS THAN (10000),
+PARTITION p2 VALUES LESS THAN (20000),
+PARTITION p3 VALUES LESS THAN (50000),
+PARTITION p4 VALUES LESS THAN (10000000000)
+);
+
+SELECT * FROM myCountry PARTITION(p3);
+
+CREATE TABLE myCountry2 AS (SELECT * FROM country WHERE Continent =
+'Asia' AND Population < 1000000);
+
+ALTER TABLE myCountry2
+PARTITION BY LIST (Population) (
+PARTITION p0 VALUES IN (617000, 328000,754700),
+PARTITION p1 VALUES IN (473000,286000,599000,885000)
+);
+
+SELECT * FROM myCountry2 PARTITION(p0);
+
+CREATE TABLE myCountry3 (select * from country);
+select * from myCountry3;
+
+ALTER TABLE myCountry3
+PARTITION BY HASH (Capital) PARTITIONS 4;
+
+select * from myCountry3 partition(p2);
+
+create table myCountry4 (select * from country);
+
+alter table myCountry4 
+partition by key (code) partitions 4;
+
+select * from myCountry partition (p2);
